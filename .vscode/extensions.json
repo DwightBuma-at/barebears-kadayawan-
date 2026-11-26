@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "usernamehw.errorlens",
+    "yoavbls.pretty-ts-errors",
+    "christian-kohler.path-intellisense",
+    "pranaygp.vscode-css-peek",
+    "Zignd.html-css-class-completion",
+    "formulahendry.auto-rename-tag",
+    "dsznajder.es7-react-js-snippets",
+    "ms-playwright.playwright",
+    "PKief.material-icon-theme",
+    "eamodio.gitlens"
+  ]
+}
