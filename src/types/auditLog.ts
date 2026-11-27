@@ -1,6 +1,7 @@
 export type PaymentMethod = 'Cash' | 'Card' | 'QR';
 
 export interface SalesAuditItem {
+  itemId?: string;
   name: string;
   size?: string;
   price: number;
@@ -31,4 +32,24 @@ export interface StockAuditEntry {
   quantityChange: number;
   stockAfter: number;
   source: string;
+}
+
+export interface InventoryFieldChange {
+  field: 'Name' | 'Price' | 'Quantity' | 'Size' | 'Image';
+  from: string;
+  to: string;
+}
+
+export interface InventoryChangeAuditEntry {
+  id: string;
+  timestamp: string;
+  itemName: string;
+  size?: string;
+  changes: InventoryFieldChange[];
+  source: string;
+}
+
+export interface VoidAuditEntry extends SalesAuditEntry {
+  voidedAt: string;
+  refundedAmount: number;
 }

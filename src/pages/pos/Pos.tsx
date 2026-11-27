@@ -100,6 +100,7 @@ export function Pos() {
       .join(', ');
 
     const items = cart.map(({ item, quantity }) => ({
+      itemId: item.id,
       name: item.name,
       size: item.size,
       price: item.price,

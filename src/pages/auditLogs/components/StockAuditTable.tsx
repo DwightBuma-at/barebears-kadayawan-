@@ -42,6 +42,9 @@ export function StockAuditTable({ logs }: StockAuditTableProps) {
               Item Name
             </th>
             <th scope="col" className="px-4 py-3 whitespace-nowrap">
+              Size
+            </th>
+            <th scope="col" className="px-4 py-3 whitespace-nowrap">
               Type
             </th>
             <th scope="col" className="px-4 py-3 text-right whitespace-nowrap">
@@ -58,7 +61,7 @@ export function StockAuditTable({ logs }: StockAuditTableProps) {
         <tbody className="divide-y divide-slate-200">
           {logs.length === 0 ? (
             <tr>
-              <td colSpan={7} className="px-4 py-10 text-center text-sm text-slate-500">
+              <td colSpan={8} className="px-4 py-10 text-center text-sm text-slate-500">
                 No stock movements recorded yet. Adding stock in Inventory or checking out in POS
                 will appear here.
               </td>
@@ -79,12 +82,16 @@ export function StockAuditTable({ logs }: StockAuditTableProps) {
                     className="px-4 py-2.5 font-medium whitespace-nowrap text-slate-900"
                   >
                     {log.itemName}
+                  </th>
+                  <td className="px-4 py-2.5 whitespace-nowrap">
                     {log.size ? (
-                      <span className="ml-2 inline-flex rounded border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[11px] font-semibold text-slate-600">
+                      <span className="inline-flex rounded border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[11px] font-semibold text-slate-600">
                         {log.size}
                       </span>
-                    ) : null}
-                  </th>
+                    ) : (
+                      <span className="text-slate-400">—</span>
+                    )}
+                  </td>
                   <td className="px-4 py-2.5 whitespace-nowrap">
                     <span
                       className={cn(

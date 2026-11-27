@@ -3,14 +3,19 @@ import { Search, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { INITIAL_INVENTORY_ITEMS, INVENTORY_STORAGE_KEY } from '@/data/inventory';
-import { appendStockAuditLog } from '@/lib/auditLogger';
+import { appendInventoryChangeAuditLog, appendStockAuditLog } from '@/lib/auditLogger';
 import { AddItemDialog } from '@/pages/inventory/components/AddItemDialog';
 import { AddStockDialog } from '@/pages/inventory/components/AddStockDialog';
 import { DeleteItemDialog } from '@/pages/inventory/components/DeleteItemDialog';
 import { EditItemDialog } from '@/pages/inventory/components/EditItemDialog';
 import { InventoryStatsBar } from '@/pages/inventory/components/InventoryStatsBar';
 import { InventoryTable } from '@/pages/inventory/components/InventoryTable';
+import type { InventoryFieldChange } from '@/types/auditLog';
 import type { InventoryItem, ItemSize, NewInventoryItemInput } from '@/types/inventory';
+
+function formatPrice(value: number): string {
+  return `₱${value.toFixed(2)}`;
+}
 
 function loadInventoryItems(): InventoryItem[] {
   if (typeof window === 'undefined') return INITIAL_INVENTORY_ITEMS;
@@ -96,7 +101,49 @@ export function Inventory() {
   };
 
   const handleSaveItem = (updated: InventoryItem) => {
+    const previous = items.find((item) => item.id === updated.id);
     setItems((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+
+    if (previous) {
+      const changes: InventoryFieldChange[] = [];
+      if (previous.name !== updated.name) {
+        changes.push({ field: 'Name', from: previous.name, to: updated.name });
+      }
+      if (previous.price !== updated.price) {
+        changes.push({
+          field: 'Price',
+          from: formatPrice(previous.price),
+          to: formatPrice(updated.price),
+        });
+      }
+      if (previous.quantity !== updated.quantity) {
+        changes.push({
+          field: 'Quantity',
+          from: String(previous.quantity),
+          to: String(updated.quantity),
+        });
+      }
+      if (previous.size !== updated.size) {
+        changes.push({ field: 'Size', from: previous.size, to: updated.size });
+      }
+      if (previous.imageUrl !== updated.imageUrl) {
+        changes.push({
+          field: 'Image',
+          from: previous.imageUrl ? 'Attached' : 'None',
+          to: updated.imageUrl ? 'Attached' : 'None',
+        });
+      }
+
+      if (changes.length > 0) {
+        appendInventoryChangeAuditLog({
+          itemName: updated.name,
+          size: updated.size,
+          changes,
+          source: 'Inventory (Edit Item)',
+        });
+      }
+    }
+
     toast.success(`Updated "${updated.name}".`);
   };
 

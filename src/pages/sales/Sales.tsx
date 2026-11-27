@@ -1,5 +1,5 @@
-import { SectionContainer } from '@/components/common/SectionContainer';
+import { UnderDevelopment } from '@/components/common/UnderDevelopment';
 
 export function Sales() {
-  return <SectionContainer />;
+  return <UnderDevelopment title="Sales" />;
 }

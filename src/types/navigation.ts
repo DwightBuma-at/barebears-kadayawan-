@@ -16,6 +16,7 @@ export interface SidebarItem {
   to: string;
   icon: LucideIcon;
   badge?: string;
+  disabled?: boolean;
 }
 
 export interface SidebarGroup {

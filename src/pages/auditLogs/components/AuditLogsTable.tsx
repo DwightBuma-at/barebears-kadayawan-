@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Eye, ReceiptText } from 'lucide-react';
+import { Ban, Eye, ReceiptText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AuditItemsDialog } from '@/pages/auditLogs/components/AuditItemsDialog';
 import { AuditReceiptDialog } from '@/pages/auditLogs/components/AuditReceiptDialog';
+import { VoidSaleDialog } from '@/pages/auditLogs/components/VoidSaleDialog';
 import type { PaymentMethod, SalesAuditEntry } from '@/types/auditLog';
 
 const DATE_TIME_FORMATTER = new Intl.DateTimeFormat('en-PH', {
@@ -24,6 +25,7 @@ const PAYMENT_BADGE_STYLES: Record<PaymentMethod, string> = {
 
 export interface AuditLogsTableProps {
   logs: SalesAuditEntry[];
+  onVoidSale: (log: SalesAuditEntry) => void;
 }
 
 function formatTimestamp(iso: string): string {
@@ -31,9 +33,10 @@ function formatTimestamp(iso: string): string {
   return Number.isNaN(date.getTime()) ? iso : DATE_TIME_FORMATTER.format(date);
 }
 
-export function AuditLogsTable({ logs }: AuditLogsTableProps) {
+export function AuditLogsTable({ logs, onVoidSale }: AuditLogsTableProps) {
   const [selectedLog, setSelectedLog] = useState<SalesAuditEntry | null>(null);
   const [receiptLog, setReceiptLog] = useState<SalesAuditEntry | null>(null);
+  const [voidTarget, setVoidTarget] = useState<SalesAuditEntry | null>(null);
 
   return (
     <>
@@ -67,12 +70,15 @@ export function AuditLogsTable({ logs }: AuditLogsTableProps) {
               <th scope="col" className="px-4 py-3 text-right whitespace-nowrap">
                 Receipt
               </th>
+              <th scope="col" className="px-4 py-3 text-right whitespace-nowrap">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
             {logs.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-sm text-slate-500">
+                <td colSpan={8} className="px-4 py-10 text-center text-sm text-slate-500">
                   No sales recorded yet. Complete a checkout in POS to see it here.
                 </td>
               </tr>
@@ -91,10 +97,9 @@ export function AuditLogsTable({ logs }: AuditLogsTableProps) {
                   <td className="px-4 py-2.5 whitespace-nowrap">
                     <Button
                       type="button"
-                      variant="outline"
                       size="sm"
                       onClick={() => setSelectedLog(log)}
-                      className="h-7 gap-1.5 rounded-md border-slate-300 bg-white px-2.5 text-xs font-medium text-[#1554B3] hover:border-[#1D6CE0] hover:bg-[#1D6CE0]/5"
+                      className="h-7 gap-1.5 rounded-md bg-[#1D6CE0] px-2.5 text-xs font-semibold text-white hover:bg-[#1554B3]"
                     >
                       <Eye className="size-3.5" aria-hidden="true" />
                       <span>View items</span>
@@ -128,6 +133,17 @@ export function AuditLogsTable({ logs }: AuditLogsTableProps) {
                       <span>View</span>
                     </Button>
                   </td>
+                  <td className="px-4 py-2.5 text-right whitespace-nowrap">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setVoidTarget(log)}
+                      className="h-7 gap-1.5 rounded-md bg-[#E5242A] px-2.5 text-xs font-semibold text-white hover:bg-[#B91C1C]"
+                    >
+                      <Ban className="size-3.5" aria-hidden="true" />
+                      <span>Void</span>
+                    </Button>
+                  </td>
                 </tr>
               ))
             )}
@@ -137,6 +153,11 @@ export function AuditLogsTable({ logs }: AuditLogsTableProps) {
 
       <AuditItemsDialog log={selectedLog} onClose={() => setSelectedLog(null)} />
       <AuditReceiptDialog log={receiptLog} onClose={() => setReceiptLog(null)} />
+      <VoidSaleDialog
+        log={voidTarget}
+        onClose={() => setVoidTarget(null)}
+        onConfirmVoid={onVoidSale}
+      />
     </>
   );
 }

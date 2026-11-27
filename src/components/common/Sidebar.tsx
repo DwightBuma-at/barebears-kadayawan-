@@ -50,6 +50,37 @@ function SidebarNavGroups({ groups, collapsed = false, onNavigate }: SidebarNavG
           <ul className="space-y-0.5">
             {group.items.map((item) => {
               const Icon = item.icon;
+              if (item.disabled) {
+                return (
+                  <li key={item.id}>
+                    <div
+                      aria-disabled="true"
+                      title={
+                        collapsed
+                          ? `${item.label}${item.badge ? ` (${item.badge})` : ''}`
+                          : undefined
+                      }
+                      className={cn(
+                        'flex cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-400 select-none',
+                        collapsed && 'justify-center px-2'
+                      )}
+                    >
+                      <Icon className="size-4 shrink-0 stroke-[1.75] text-slate-400" aria-hidden="true" />
+                      {!collapsed ? (
+                        <>
+                          <span className="flex-1 truncate">{item.label}</span>
+                          {item.badge ? (
+                            <span className="shrink-0 rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
+                              {item.badge}
+                            </span>
+                          ) : null}
+                        </>
+                      ) : null}
+                    </div>
+                  </li>
+                );
+              }
+
               return (
                 <li key={item.id}>
                   <NavLink
